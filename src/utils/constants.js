@@ -4,8 +4,8 @@ const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 export const ENV = {
     BASE_PATH: SERVER_IP,
-    BASE_API: `${SERVER_IP}/${API_VERSION}`,
+    BASE_API: `${SERVER_IP}${API_VERSION}`,
     API_ROUTES: {
-        SIGNIN: "/auth/signin",
+        SIGNIN: "auth/signin",
     }
 };
