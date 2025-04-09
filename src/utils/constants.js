@@ -6,6 +6,6 @@ export const ENV = {
     BASE_PATH: SERVER_IP,
     BASE_API: `${SERVER_IP}${API_VERSION}`,
     API_ROUTES: {
-        SIGNIN: "auth/signin",
+        SIGNIN: "auth/signinSMS",
     }
 };

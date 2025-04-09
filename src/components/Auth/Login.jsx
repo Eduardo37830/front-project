@@ -2,7 +2,8 @@ import { Card, Spin, Typography } from "antd";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { auth } from "../../api/auth";
-import {setLoading, setUser} from "../../redux/authSlice";
+import { setLoading, setUser } from "../../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 import "./login.css";
 
 const { Title } = Typography;
@@ -14,6 +15,7 @@ const Login = () => {
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { loading, isAuthenticated } = useSelector((state) => state.auth);
   const [errors, setErrors] = useState({});
@@ -42,7 +44,6 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    // Capturar nombre del input y valor que el usuario esté asignando
     e.preventDefault();
     setLoginError(null);
 
@@ -53,10 +54,14 @@ const Login = () => {
     try {
       const response = await auth.signIn(formData);
       console.log(response);
-      
+      // Simular éxito en la autenticación
+      dispatch(setUser({ isAuthenticated: true, token: "fake-token" }));
+      navigate("/verify-code");
     } catch (error) {
-      setLoginError("Invalidad email or password");
+      setLoginError("Invalid email or password");
       console.log("Error en el login", error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 

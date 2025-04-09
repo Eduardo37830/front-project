@@ -1,0 +1,91 @@
+.verify-container {
+  max-width: 400px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.verify-container h2 {
+  text-align: center;
+}
+
+.verify-container p {
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: white;
+  color: black;
+}
+
+.form-group input:focus {
+  border-color: #542fa9;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.field-error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+.login-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.resend-link {
+  color: blue;
+  cursor: pointer;
+  text-align: center;
+  display: block;
+  margin-top: 10px;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.login-container h2 {
+  text-align: center;
+}
+
+.login-container p {
+  text-align: center;
+}
+
+.login-container span {
+  color: blue;
+  cursor: pointer;
+}
