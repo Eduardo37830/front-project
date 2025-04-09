@@ -2,14 +2,14 @@ import React, { useEffect, useState, useRef } from "react";
 import "./dashboard.css";
 
 const ITEMS_PER_PAGE = 10;
+const PAGINATION_LIMIT = 3; // Número de botones de página a mostrar
 
 function Dashboard() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatedData, setPaginatedData] = useState([]);
-  const [error, setError] = useState(null); // Nuevo estado para manejar errores
+  const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
-
 
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
 
@@ -17,7 +17,7 @@ function Dashboard() {
     const file = event.target.files[0];
     if (file) {
       const formData = new FormData();
-      formData.append("csv-file", file); // Asegúrate de que coincida con el nombre del campo esperado por multer en el backend
+      formData.append("csv-file", file);
 
       fetch("http://localhost:3000/api/v1/towns/batch", {
         method: "POST",
@@ -26,10 +26,7 @@ function Dashboard() {
         .then((response) => {
           if (response.ok) {
             console.log("CSV uploaded successfully");
-            // Recargar los datos después de la carga exitosa
-            // ¡POSIBLE AJUSTE! Si el POST a /batch devuelve los datos actualizados, puedes usar eso.
-            // Si no, es posible que necesites hacer otra petición GET al endpoint de datos.
-            fetch("http://localhost:3000/api/v1/towns/") // Ejemplo: Volver a obtener los datos
+            fetch("http://localhost:3000/api/v1/towns/")
               .then((res) => res.json())
               .then((fetchedData) => {
                 setData(fetchedData);
@@ -40,15 +37,12 @@ function Dashboard() {
               });
           } else {
             console.error("Error uploading CSV:", response.status);
-            // Puedes mostrar un mensaje de error al usuario aquí
           }
         })
         .catch((error) => {
           console.error("Error uploading CSV:", error);
-          // Puedes mostrar un mensaje de error al usuario aquí
         });
 
-      // Limpiar el input de archivo después de la carga (opcional)
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -56,8 +50,52 @@ function Dashboard() {
   };
 
   const handleUploadButtonClick = () => {
-    fileInputRef.current.click(); // Simula el click en el input de tipo file
+    fileInputRef.current.click();
   };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const getPaginationNumbers = () => {
+    const pages = [];
+    const start = Math.max(1, currentPage - Math.floor(PAGINATION_LIMIT / 2));
+    const end = Math.min(totalPages, start + PAGINATION_LIMIT - 1);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    setPaginatedData(data.slice(startIndex, endIndex));
+  }, [data, currentPage]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/v1/towns/")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((fetchedData) => {
+        setData(fetchedData);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setError(error);
+      });
+  }, []);
+
+  if (error) {
+    return <div>Error al cargar los datos. Por favor, inténtelo de nuevo más tarde.</div>;
+  }
 
   return (
     <div className="dashboard-container">
@@ -92,42 +130,44 @@ function Dashboard() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>
-                  <input type="checkbox" />
-                </th>
-                <th>Documento</th>
-                <th>Ciudad</th>
-                <th>Date uploaded</th>
-                <th>Last updated</th>
-                <th>Uploaded by</th>
+                <th>name</th>
+                <th>departament</th>
               </tr>
             </thead>
             <tbody>
               {paginatedData.map((item, index) => (
                 <tr key={index}>
-                  <td>
-                    <input type="checkbox" />
-                  </td>
-                  <td>{item.documento}</td>
-                  <td>{item.ciudad}</td>
-                  <td>{item.dateUploaded}</td>
-                  <td>{item.lastUpdated}</td>
-                  <td>{item.uploadedBy}</td>
+                  <td>{item.name}</td>
+                  <td>{item.department.name}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
           <div className="pagination">
-            {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              className="page-btn arrow"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              &lt;
+            </button>
+            {getPaginationNumbers().map((pageNumber) => (
               <button
-                key={i}
-                className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
-                onClick={() => setCurrentPage(i + 1)}
+                key={pageNumber}
+                className={`page-btn ${currentPage === pageNumber ? "active" : ""}`}
+                onClick={() => handlePageChange(pageNumber)}
               >
-                {i + 1}
+                {pageNumber}
               </button>
             ))}
+            <button
+              className="page-btn arrow"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              &gt;
+            </button>
           </div>
         </section>
       </main>
