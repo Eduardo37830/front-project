@@ -7,26 +7,9 @@ function Dashboard() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatedData, setPaginatedData] = useState([]);
+  const [error, setError] = useState(null); // Nuevo estado para manejar errores
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    // Llamada al backend para obtener los datos iniciales
-    fetch("http://localhost:3000/csv")
-      .then((res) => res.json())
-      .then((fetchedData) => {
-        setData(fetchedData);
-        setCurrentPage(1); // reiniciar a la página 1
-      })
-      .catch((error) => {
-        console.error("Error al obtener datos del backend:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    setPaginatedData(data.slice(start, end));
-  }, [data, currentPage]);
 
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
 
@@ -34,9 +17,9 @@ function Dashboard() {
     const file = event.target.files[0];
     if (file) {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("csv-file", file); // Asegúrate de que coincida con el nombre del campo esperado por multer en el backend
 
-      fetch("http://localhost:3000/csv", {
+      fetch("http://localhost:3000/api/v1/towns/batch", {
         method: "POST",
         body: formData,
       })
@@ -44,7 +27,9 @@ function Dashboard() {
           if (response.ok) {
             console.log("CSV uploaded successfully");
             // Recargar los datos después de la carga exitosa
-            fetch("http://localhost:3000/csv")
+            // ¡POSIBLE AJUSTE! Si el POST a /batch devuelve los datos actualizados, puedes usar eso.
+            // Si no, es posible que necesites hacer otra petición GET al endpoint de datos.
+            fetch("http://localhost:3000/api/v1/towns/") // Ejemplo: Volver a obtener los datos
               .then((res) => res.json())
               .then((fetchedData) => {
                 setData(fetchedData);
