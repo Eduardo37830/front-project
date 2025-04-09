@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "./dashboard.css";
 
 const ITEMS_PER_PAGE = 10;
-const PAGINATION_LIMIT = 3; // Número de botones de página a mostrar
+const PAGINATION_LIMIT = 3;
 
 function Dashboard() {
   const [data, setData] = useState([]);
@@ -10,6 +10,7 @@ function Dashboard() {
   const [paginatedData, setPaginatedData] = useState([]);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
 
@@ -26,15 +27,7 @@ function Dashboard() {
         .then((response) => {
           if (response.ok) {
             console.log("CSV uploaded successfully");
-            fetch("http://localhost:3000/api/v1/towns/")
-              .then((res) => res.json())
-              .then((fetchedData) => {
-                setData(fetchedData);
-                setCurrentPage(1);
-              })
-              .catch((error) => {
-                console.error("Error al recargar datos:", error);
-              });
+            fetchData();
           } else {
             console.error("Error uploading CSV:", response.status);
           }
@@ -70,13 +63,7 @@ function Dashboard() {
     return pages;
   };
 
-  useEffect(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    setPaginatedData(data.slice(startIndex, endIndex));
-  }, [data, currentPage]);
-
-  useEffect(() => {
+  const fetchData = () => {
     fetch("http://localhost:3000/api/v1/towns/")
       .then((res) => {
         if (!res.ok) {
@@ -86,12 +73,60 @@ function Dashboard() {
       })
       .then((fetchedData) => {
         setData(fetchedData);
+        setDataLoaded(true);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
         setError(error);
+        setDataLoaded(true); // Ensure dataLoaded is true even on error
       });
+  };
+
+  useEffect(() => {
+    // Do not fetch data on initial mount in this option
   }, []);
+
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    setPaginatedData(data.slice(startIndex, endIndex));
+  }, [data, currentPage]);
+
+  if (!dataLoaded) {
+    return (
+      <div className="dashboard-container">
+        <header className="dashboard-profile">
+          <div className="avatar-circle">
+            <span className="avatar-icon">👤</span>
+          </div>
+          <div className="profile-info">
+            <h2>BIENVENIDO/A!</h2>
+            <h1>ADMINISTRADOR</h1>
+          </div>
+        </header>
+        <main className="dashboard-main">
+          <section className="table-section">
+            <div className="table-header">
+              <h2>Información departamental y capital</h2>
+              <div className="table-actions">
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileUpload}
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                />
+                <button className="btn green" onClick={handleUploadButtonClick}>
+                  Upload
+                </button>
+              </div>
+            </div>
+            <p>No data loaded yet. Please upload a CSV file.</p>
+          </section>
+        </main>
+      </div>
+    );
+  }
 
   if (error) {
     return <div>Error al cargar los datos. Por favor, inténtelo de nuevo más tarde.</div>;
