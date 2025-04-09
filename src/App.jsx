@@ -3,6 +3,7 @@ import "./App.css";
 import Login from "./components/Auth/Login";
 import { Routes, Route, Navigate } from "react-router-dom";
 import VerifyCode from "./components/Auth/VerifyCode";
+import Dashboard from "./components/dashboard/dashboard";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/verify-code" element={<VerifyCode />} />
       <Route path="*" element={<Navigate to="/login" />} />
+      <Route path = "/dashboard" element ={<Dashboard/>}/>
     </Routes>
   );
 }

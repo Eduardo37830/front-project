@@ -1,10 +1,10 @@
 .login-container {
   max-width: 400px;
-  margin: 0 auto;
+  margin: 50px auto;
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: #f0f2f0 !important; /* Agregamos !important */
 }
 
 .form-group {
@@ -14,29 +14,58 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #555;
+  font-weight: bold;
+  color: #383838; /* Gris oscuro para el texto de las etiquetas */
 }
 
 .form-group input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #d9d9d9; /* Borde gris más claro */
   border-radius: 4px;
   font-size: 16px;
   background-color: white;
-  color: black;
+  color: #262626; /* Texto del input más oscuro */
 }
 
 .form-group input:focus {
-  border-color: #542fa9;
+  border-color: #135200; /* Verde oscuro similar al botón */
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 0 5px rgba(19, 82, 0, 0.2); /* Sombra verde suave al enfocar */
 }
 
 .field-error {
-  color: red;
+  color: #a61d24; /* Rojo más suave para los errores */
   font-size: 14px;
   margin-top: 5px;
   display: block;
+}
+
+.login-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #135200; /* Verde oscuro similar al botón "Continuar" */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #176d00; /* Verde ligeramente más claro al hacer hover */
+}
+
+.login-button:disabled {
+  background-color: #597a54; /* Verde grisáceo para el estado disabled */
+  cursor: not-allowed;
+}
+
+/* Estilos adicionales para el título */
+.login-container h2 {
+  color: #262626; /* Color del título */
+  text-align: center;
+  margin-bottom: 2rem;
 }
